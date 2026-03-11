@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deepak & Sruthi Outfit Agreement</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<style>
+
+body{
+margin:0;
+font-family:Segoe UI;
+background:#0f172a;
+color:white;
+overflow-x:hidden;
+}
+
+.bg{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-1;
+background:radial-gradient(circle at 30% 30%,#3b82f6,#0f172a);
+animation:bgMove 8s infinite alternate;
+}
+
+@keyframes bgMove{
+0%{transform:scale(1)}
+100%{transform:scale(1.2)}
+}
+
+.container{
+max-width:900px;
+margin:40px auto;
+background:rgba(255,255,255,0.08);
+backdrop-filter:blur(15px);
+padding:35px;
+border-radius:15px;
+box-shadow:0 20px 40px rgba(0,0,0,0.4);
+}
+
+h1{text-align:center}
+
+.rule{
+background:rgba(255,255,255,0.1);
+padding:15px;
+border-radius:10px;
+margin-bottom:12px;
+}
+
+canvas{
+background:white;
+border-radius:10px;
+border:2px dashed #aaa;
+}
+
+button{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+background:#3b82f6;
+color:white;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+#downloadBtn{
+display:none;
+margin-top:20px;
+font-size:18px;
+}
+
+footer{
+text-align:center;
+margin-top:25px;
+opacity:.7;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="container" id="agreement">
+
+<h1>👕 Outfit Supply Agreement 😂</h1>
+
+<p style="text-align:center">
+Official sibling contract between <b>Deepak</b> and <b>Sruthi</b>
+</p>
+
+<div class="rule">1️⃣ Sruthi must buy Deepak <b>1 outfit every month</b>.</div>
+<div class="rule">2️⃣ Total <b>12 outfits per year</b>.</div>
+<div class="rule">3️⃣ Deepak can reject ugly or wrong size outfits.</div>
+<div class="rule">4️⃣ Delivery before end of month.</div>
+<div class="rule">5️⃣ If forgotten → <b>2 outfits next month OR meal + dessert</b>.</div>
+<div class="rule">6️⃣ Deepak must say “My sister is the best”.</div>
+<div class="rule">7️⃣ Valid for <b>1 year</b>.</div>
+
+<h3>✍️ Deepak Signature</h3>
+<canvas id="sig1" width="400" height="150"></canvas><br>
+<button onclick="clearCanvas('sig1')">Clear</button>
+
+<h3>✍️ Sruthi Signature</h3>
+<canvas id="sig2" width="400" height="150"></canvas><br>
+<button onclick="clearCanvas('sig2')">Clear</button>
+
+<button id="downloadBtn" onclick="downloadPDF()">📄 Download Signed Agreement</button>
+
+<footer>
+⚠️ Valid only in sibling arguments.
+</footer>
+
+</div>
+
+<script>
+
+let signed1=false
+let signed2=false
+
+function setupCanvas(id){
+
+const canvas=document.getElementById(id)
+const ctx=canvas.getContext("2d")
+
+let drawing=false
+
+canvas.addEventListener("mousedown",()=>drawing=true)
+
+canvas.addEventListener("mouseup",()=>{
+drawing=false
+checkSign(id)
+})
+
+canvas.addEventListener("mousemove",draw)
+
+function draw(e){
+
+if(!drawing) return
+
+ctx.lineWidth=2
+ctx.lineCap="round"
+ctx.strokeStyle="#000"
+
+ctx.lineTo(e.offsetX,e.offsetY)
+ctx.stroke()
+
+ctx.beginPath()
+ctx.moveTo(e.offsetX,e.offsetY)
+
+}
+
+}
+
+function checkSign(id){
+
+if(id==="sig1") signed1=true
+if(id==="sig2") signed2=true
+
+if(signed1 && signed2){
+
+confetti({
+particleCount:200,
+spread:120,
+origin:{y:0.6}
+})
+
+document.getElementById("downloadBtn").style.display="block"
+
+alert("🎉 Agreement Signed! Deepak now gets 12 outfits 😂")
+
+}
+
+}
+
+function clearCanvas(id){
+
+const canvas=document.getElementById(id)
+const ctx=canvas.getContext("2d")
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+if(id==="sig1") signed1=false
+if(id==="sig2") signed2=false
+
+document.getElementById("downloadBtn").style.display="none"
+
+}
+
+function downloadPDF(){
+
+html2canvas(document.getElementById("agreement")).then(canvas=>{
+
+const img=canvas.toDataURL("image/png")
+
+const { jsPDF } = window.jspdf
+
+const pdf=new jsPDF()
+
+pdf.addImage(img,'PNG',0,0,210,297)
+
+pdf.save("Deepak-Sruthi-Agreement.pdf")
+
+})
+
+}
+
+setupCanvas("sig1")
+setupCanvas("sig2")
+
+</script>
+
+</body>
+</html>
